@@ -1,0 +1,38 @@
+# Copyright 2022 NEC Corporation
+# Released under the MIT license.
+# https://opensource.org/licenses/mit-license.php
+#
+# SDE-IMPL-RECOMMENDED REST API サーバーのポート番号を指定します
+ports:
+    http: 3003
+
+# SDE-IMPL-RECOMMENDED ログレベルを次のいずれかを設定します[none/debug/info]
+loglevel: info
+
+# SDE-MSA-PRIN 過負荷を回避する （MSA-PRIN-ID-02）
+# SDE-IMPL-RECOMMENDED Backpressureの設定をします
+backPressure:
+    threshold: 100  # 同時実行数しきい値
+
+accessControl:
+    token: http://localhost:3015/access-control/token
+    collate: http://localhost:3015/access-control/collate
+
+catalogService:
+    get: http://localhost:3001/catalog/
+
+operatorService:
+    session: http://localhost:3000/operator/session/
+    operator: http://localhost:3000/operator
+
+proxyService:
+    protocol: http
+    proxy: http://localhost:3003/pxr-block-proxy
+    reverseProxyPort: 4003
+    reverseProxyPath: /pxr-block-proxy/reverse
+
+pxr-root:
+    isString: $pxr-root-block
+    blockCode: 5555555
+    domain: localhost
+    name: pxr-root

@@ -1,0 +1,251 @@
+{
+    "self": {
+        "GET": {
+            "3": [
+                "^\\/operator\\/?\\?.+\\/?$",
+                "^\\/operator\\/\\d+\\/?$",
+                "^\\/catalog\\/name\\/?$",
+                "^\\/catalog\\/?\\?.+\\/?$",
+                "^\\/catalog\\/\\d+\\/?$",
+                "^\\/catalog\\/\\d+\\/\\d+\\/?$",
+                "^\\/catalog\\/inner\\/\\d+\\/.+\\/?$",
+                "^\\/catalog\\/inner\\/\\d+\\/\\d+\\/.+\\/?$",
+                "^\\/catalog\\/ns\\/?\\?.+\\/?$",
+                "^\\/catalog\\/ns\\/\\d+\\/?$",
+                "^\\/catalog\\/updateSet\\/register\\/?$",
+                "^\\/catalog\\/updateSet\\/request\\/?$",
+                "^\\/catalog\\/updateSet\\/approval\\/\\d+\\/?$",
+                "^\\/catalog-update\\/actor\\/?\\?.+\\/?$",
+                "^\\/catalog-update\\/actor\\/accreditor\\/?\\?.+\\/?$",
+                "^\\/catalog-update\\/join\\/?\\?.+\\/?$",
+                "^\\/notification\\/?\\?.+\\/?$",
+                "^\\/identity-verificate\\/acquisition\\/identification\\/.+\\/?$",
+                "^\\/certificate-manage\\/check\\/client\\/?$"
+            ],
+            "2": [],
+            "1": [],
+            "0": [
+                "^\\/catalog\\/name\\/?$",
+                "^\\/catalog\\/?\\?.+\\/?$",
+                "^\\/catalog\\/\\d+\\/?$",
+                "^\\/catalog\\/\\d+\\/\\d+\\/?$",
+                "^\\/catalog\\/inner\\/\\d+\\/\\d+\\/?$",
+                "^\\/catalog\\/inner\\/\\d+\\/\\d+\\/.+\\/?$",
+                "^\\/catalog\\/ns\\/?\\?.+\\/?$",
+                "^\\/catalog\\/ns\\/\\d+\\/?$",
+                "^\\/notification\\/?\\?.+\\/?$",
+                "^\\/book-manage\\/cooperate\\/?$",
+                "^\\/book-manage\\/identification\\/?$",
+                "^\\/book-manage\\/settings\\/store\\/.+\\/?$",
+                "^\\/book-manage\\/setting\\/share\\/?\\?.+\\/?$",
+                "^\\/book-manage\\/share\\/temp\\/?\\?.+\\/?$"
+            ]
+        },
+        "POST": {
+            "3": [
+                "^\\/operator\\/?$",
+                "^\\/operator\\/session\\/?$",
+                "^\\/catalog\\/ext\\/?$",
+                "^\\/catalog\\/ext\\/\\d+\\/?$",
+                "^\\/catalog\\/ns\\/ext\\/?$",
+                "^\\/catalog\\/ns\\/ext\\/\\d+\\/?$",
+                "^\\/catalog\\/updateSet\\/register\\/?$",
+                "^\\/catalog\\/updateSet\\/request\\/?$",
+                "^\\/catalog\\/updateSet\\/approval\\/\\d+\\/?$",
+                "^\\/catalog-update\\/actor\\/?$",
+                "^\\/catalog-update\\/join\\/?$",
+                "^\\/catalog-update\\/actor\\/remove\\/?$",
+                "^\\/catalog-update\\/join\\/remove\\/?$",
+                "^\\/notification\\/?$",
+                "^\\/book-manage\\/?$",
+                "^\\/book-manage\\/check\\/pxr-id\\/?$",
+                "^\\/book-manage\\/check\\/identification\\/?$",
+                "^\\/book-manage\\/search\\/?$",
+                "^\\/book-manage\\/search\\/user\\/?$",
+                "^\\/book-manage\\/identity\\/?$",
+                "^\\/book-manage\\/cooperate\\/?$",
+                "^\\/book-manage\\/login-code\\/?$",
+                "^\\/book-manage\\/sms\\/open\\/?$",
+                "^\\/identity-verificate\\/code\\/?$",
+                "^\\/identity-verificate\\/url\\/?$",
+                "^\\/identity-verificate\\/user\\/settings\\/?$",
+                "^\\/ctoken-ledger\\/count\\/?$"
+            ],
+            "2": [],
+            "1": [],
+            "0": [
+                "^\\/operator\\/session\\/?$",
+                "^\\/notification\\/?$",
+                "^\\/book-manage\\/settings\\/store\\/?$",
+                "^\\/book-manage\\/ctoken\\/?$",
+                "^\\/book-manage\\/accesslog\\/?$",
+                "^\\/book-manage\\/setting\\/share\\/?$",
+                "^\\/book-manage\\/share\\/temp\\/?$",
+                "^\\/identity-verificate\\/code\\/?$"
+            ]
+        },
+        "PUT": {
+            "3": [
+                "^\\/operator\\/\\d+\\/?$",
+                "^\\/operator\\/password\\/\\d+\\/?$",
+                "^\\/catalog\\/name\\/?$",
+                "^\\/catalog\\/ext\\/?$",
+                "^\\/catalog\\/ext\\/\\d+\\/?$",
+                "^\\/catalog\\/ns\\/ext\\/?$",
+                "^\\/catalog\\/ns\\/ext\\/\\d+\\/?$",
+                "^\\/catalog\\/updateSet\\/register\\/\\d+\\/?$",
+                "^\\/notification\\/?$",
+                "^\\/notification\\/approval\\/?$",
+                "^\\/book-manage\\/force-enable\\/?$",
+                "^\\/book-manage\\/force-deletion\\/?$",
+                "^\\/identity-verificate\\/verify\\/others\\/.+\\/?$"
+            ],
+            "2": [],
+            "1": [],
+            "0": [
+                "^\\/operator\\/ind\\/user\\/info\\/?$",
+                "^\\/notification\\/?$"
+            ]
+        },
+        "DELETE": {
+            "3": [
+                "^\\/operator\\/\\d+\\/?$",
+                "^\\/catalog\\/ext\\/\\d+\\/?$",
+                "^\\/catalog\\/ns\\/ext\\/\\d+\\/?$",
+                "^\\/catalog\\/updateSet\\/register\\/\\d+\\/?$"
+            ],
+            "2": [],
+            "1": [],
+            "0": [
+                "^\\/book-manage\\/?$",
+                "^\\/book-manage\\/settings\\/store\\/.+\\/?$",
+                "^\\/book-manage\\/setting\\/share\\/\\d+\\/?$"
+            ]
+        }
+    },
+    "pxr-root": {
+        "GET": {
+            "3": [
+                "^\\/operator\\/?\\?.+\\/?$",
+                "^\\/operator\\/\\d+\\/?$",
+                "^\\/catalog\\/name\\/?$",
+                "^\\/catalog\\/?\\?.+\\/?$",
+                "^\\/catalog\\/\\d+\\/?$",
+                "^\\/catalog\\/\\d+\\/\\d+\\/?$",
+                "^\\/catalog\\/inner\\/\\d+\\/.+\\/?$",
+                "^\\/catalog\\/inner\\/\\d+\\/\\d+\\/.+\\/?$",
+                "^\\/catalog\\/ns\\/?\\?.+\\/?$",
+                "^\\/catalog\\/ns\\/\\d+\\/?$",
+                "^\\/catalog\\/updateSet\\/register\\/?$",
+                "^\\/catalog\\/updateSet\\/request\\/?$",
+                "^\\/catalog\\/updateSet\\/approval\\/\\d+\\/?$",
+                "^\\/catalog-update\\/actor\\/?\\?.+\\/?$",
+                "^\\/catalog-update\\/actor\\/accreditor\\/?\\?.+\\/?$",
+                "^\\/catalog-update\\/join\\/?\\?.+\\/?$",
+                "^\\/notification\\/?\\?.+\\/?$",
+                "^\\/identity-verificate\\/acquisition\\/identification\\/.+\\/?$",
+                "^\\/certificate-manage\\/check\\/client\\/?$"
+            ],
+            "2": [],
+            "1": [],
+            "0": [
+                "^\\/catalog\\/name\\/?$",
+                "^\\/catalog\\/?\\?.+\\/?$",
+                "^\\/catalog\\/\\d+\\/?$",
+                "^\\/catalog\\/\\d+\\/\\d+\\/?$",
+                "^\\/catalog\\/inner\\/\\d+\\/\\d+\\/?$",
+                "^\\/catalog\\/inner\\/\\d+\\/\\d+\\/.+\\/?$",
+                "^\\/catalog\\/ns\\/?\\?.+\\/?$",
+                "^\\/catalog\\/ns\\/\\d+\\/?$",
+                "^\\/notification\\/?\\?.+\\/?$",
+                "^\\/book-manage\\/cooperate\\/?$",
+                "^\\/book-manage\\/identification\\/?$",
+                "^\\/book-manage\\/settings\\/store\\/.+\\/?$",
+                "^\\/book-manage\\/setting\\/share\\/?$",
+                "^\\/book-manage\\/share\\/temp\\/?\\?.+\\/?$"
+            ]
+        },
+        "POST": {
+            "3": [
+                "^\\/operator\\/?$",
+                "^\\/operator\\/session\\/?$",
+                "^\\/catalog\\/ext\\/?$",
+                "^\\/catalog\\/ext\\/\\d+\\/?$",
+                "^\\/catalog\\/ns\\/ext\\/?$",
+                "^\\/catalog\\/ns\\/ext\\/\\d+\\/?$",
+                "^\\/catalog\\/updateSet\\/register\\/?$",
+                "^\\/catalog\\/updateSet\\/request\\/?$",
+                "^\\/catalog\\/updateSet\\/approval\\/\\d+\\/?$",
+                "^\\/catalog-update\\/actor\\/?$",
+                "^\\/catalog-update\\/join\\/?$",
+                "^\\/catalog-update\\/actor\\/remove\\/?$",
+                "^\\/catalog-update\\/join\\/remove\\/?$",
+                "^\\/notification\\/?$",
+                "^\\/book-manage\\/?$",
+                "^\\/book-manage\\/check\\/pxr-id\\/?$",
+                "^\\/book-manage\\/check\\/identification\\/?$",
+                "^\\/book-manage\\/search\\/?$",
+                "^\\/book-manage\\/identity\\/?$",
+                "^\\/book-manage\\/cooperate\\/?$",
+                "^\\/book-manage\\/login-code\\/?$",
+                "^\\/book-manage\\/sms\\/open\\/?$",
+                "^\\/identity-verificate\\/code\\/?$",
+                "^\\/identity-verificate\\/url\\/?$",
+                "^\\/identity-verificate\\/user\\/settings\\/?$",
+                "^\\/ctoken-ledger\\/count\\/?$"
+            ],
+            "2": [],
+            "1": [],
+            "0": [
+                "^\\/operator\\/session\\/?$",
+                "^\\/notification\\/?$",
+                "^\\/book-manage\\/settings\\/store\\/?$",
+                "^\\/book-manage\\/ctoken\\/?$",
+                "^\\/book-manage\\/accesslog\\/?$",
+                "^\\/book-manage\\/setting\\/share\\/?$",
+                "^\\/book-manage\\/share\\/temp\\/?$",
+                "^\\/identity-verificate\\/code\\/?$"
+            ]
+        },
+        "PUT": {
+            "3": [
+                "^\\/operator\\/\\d+\\/?$",
+                "^\\/operator\\/password\\/\\d+\\/?$",
+                "^\\/catalog\\/name\\/?$",
+                "^\\/catalog\\/ext\\/?$",
+                "^\\/catalog\\/ext\\/\\d+\\/?$",
+                "^\\/catalog\\/ns\\/ext\\/?$",
+                "^\\/catalog\\/ns\\/ext\\/\\d+\\/?$",
+                "^\\/catalog\\/updateSet\\/register\\/\\d+\\/?$",
+                "^\\/notification\\/?$",
+                "^\\/notification\\/approval\\/?$",
+                "^\\/book-manage\\/force-enable\\/?$",
+                "^\\/book-manage\\/force-deletion\\/?$",
+                "^\\/identity-verificate\\/verify\\/others\\/.+\\/?$"
+            ],
+            "2": [],
+            "1": [],
+            "0": [
+                "^\\/operator\\/ind\\/user\\/info\\/?$",
+                "^\\/notification\\/?$"
+            ]
+        },
+        "DELETE": {
+            "3": [
+                "^\\/operator\\/\\d+\\/?$",
+                "^\\/catalog\\/ext\\/\\d+\\/?$",
+                "^\\/catalog\\/ns\\/ext\\/\\d+\\/?$",
+                "^\\/catalog\\/updateSet\\/register\\/\\d+\\/?$"
+            ],
+            "2": [],
+            "1": [],
+            "0": [
+                "^\\/book-manage\\/?$",
+                "^\\/book-manage\\/settings\\/store\\/.+\\/?$",
+                "^\\/book-manage\\/setting\\/share\\/\\d+\\/?$"
+            ]
+        }
+    },
+    "region-root": {},
+    "app": {}
+}

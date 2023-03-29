@@ -1,0 +1,18 @@
+{
+    "operator": 3000,
+    "catalog": 3001,
+    "catalog-update": 3002,
+    "pxr-block-proxy": 3003,
+    "notification": 3004,
+    "book-manage": 3005,
+    "book-operate": 3006,
+    "identity-verificate": 3007,
+    "ctoken-ledger": 3008,
+    "local-ctoken": 3009,
+    "certification-authority": 3012,
+    "certificate-manage": 3013,
+    "access-control-manage": 3014,
+    "access-control": 3015,
+    "audit": 3017,
+    "binary-manage": 3018
+}
