@@ -7,10 +7,12 @@ import config = require('config');
 import request = require('request');
 import AppError from '../common/AppError';
 import OperatorDomain from '../domains/OperatorDomain';
-import { Request } from 'express';
+import { application, Request } from 'express';
 import { doPostRequest, doGetRequest } from '../common/DoRequest';
 import Config from '../common/Config';
+import { applicationLogger } from '../common/logging';
 const Message = Config.ReadConfig('./config/message.json');
+const Condig = Config.ReadConfig('./config/config.json')
 /* eslint-enable */
 
 /**
@@ -65,6 +67,18 @@ export default class OperatorService {
 
         // ヘッダーにセッション情報があれば、それを流用する
         } else if (req.headers.session) {
+            const [isExternal, isBetweenBlocks, isWithinBlock] = await Promise.all([
+                judgeExternal(req.headers),
+                judgeBetweenBlocks(req.headers),
+                judgeWithinBlock(req.headers)
+            ]);
+            applicationLogger.debug(JSON.stringify({ isExternal: isExternal, isBetweenBlocks: isBetweenBlocks, isWithinBlock: isWithinBlock }));
+            if (isExternal && !(isBetweenBlocks || isWithinBlock)) {
+                // 外部通信かつ、Block間あるいはBlock内の通信ではない場合、不正なアクセスのためエラー
+                throw new AppError(Message.NOT_AUTHORIZED, 401);
+            }
+
+            applicationLogger.debug('headers: ' + JSON.stringify(req.headers));
             let data = decodeURIComponent(req.headers.session + '');
             while (typeof data === 'string') {
                 data = JSON.parse(data);
@@ -74,6 +88,62 @@ export default class OperatorService {
         // セッション情報が存在しない場合、未ログインとしてエラーをスローする
         } else {
             throw new AppError(Message.NOT_AUTHORIZED, 401);
+        }
+
+        /**
+         * headerを参照して、外部からのアクセスかどうか判定する
+         * （以下同様functionは、保守性確保のため敢えて分ける。）
+         * @param headers
+         * @returns
+         */
+        function judgeExternal (headers: {}) {
+            let isExternal = false;
+            for (const keyValue of Condig['headersPattern']['external']) {
+                if (headers[keyValue.key]) {
+                    isExternal = new RegExp(keyValue.value).test(headers[keyValue.key]);
+                }
+                // キー名と一致するプロパティが存在しない、あるいはプロパティの値が正規表現にマッチしない場合は処理を抜けてfalse判定を返す
+                if (!isExternal) {
+                    break;
+                }
+            }
+            return isExternal;
+        }
+        /**
+         * headerを参照して、Block間通信かどうか判定する
+         * @param headers
+         * @returns
+         */
+        function judgeBetweenBlocks (headers: {}) {
+            let isBetweenBlocks = false;
+            for (const keyValue of Condig['headersPattern']['betweenBlocks']) {
+                if (headers[keyValue.key]) {
+                    isBetweenBlocks = new RegExp(keyValue.value).test(headers[keyValue.key]);
+                }
+                // キー名と一致するプロパティが存在しない、あるいはプロパティの値が正規表現にマッチしない場合は処理を抜けてfalse判定を返す
+                if (!isBetweenBlocks) {
+                    break;
+                }
+            }
+            return isBetweenBlocks;
+        }
+        /**
+         * headerを参照して、Block内通信かどうか判定する
+         * @param headers
+         * @returns
+         */
+        function judgeWithinBlock (headers: {}) {
+            let isWithinBlock = false;
+            for (const keyValue of Condig['headersPattern']['withinBlock']) {
+                if (headers[keyValue.key]) {
+                    isWithinBlock = new RegExp(keyValue.value).test(headers[keyValue.key]);
+                }
+                // キー名と一致するプロパティが存在しない、あるいはプロパティの値が正規表現にマッチしない場合は処理を抜けてfalse判定を返す
+                if (!isWithinBlock) {
+                    break;
+                }
+            }
+            return isWithinBlock;
         }
     }
 
