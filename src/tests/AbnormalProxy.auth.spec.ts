@@ -5,6 +5,7 @@ https://opensource.org/licenses/mit-license.php
 /* eslint-disable */
 // スタブ構成用モジュールのインポート
 import * as fs from 'fs';
+import { Session } from './Session';
 // ポート管理するファイルを変更する
 const beforeFileLines = fs.readFileSync('./config/port.json', { encoding: 'utf-8' });
 const beforePermissionLines = fs.readFileSync('./config/permission.json', { encoding: 'utf-8' });
@@ -116,6 +117,32 @@ describe('PXR-Block-Proxy Service Abnormal API', () => {
             expect(JSON.stringify(response.body))
                 .toBe(JSON.stringify({
                     status: 401, message: 'この操作をするための権限がありません'
+                }));
+            expect(response.status).toBe(401);
+        });
+    });
+    // Proxy APIのテスト（権限エラー）
+    describe('プロキシーAPI (GET|POST|PUT|DELETE): ' + baseURI, () => {
+        // 異常系: headerにセッション情報を持った状態で外部からアクセス（非ログイン）
+        test('異常系: headerにセッション情報を持った状態で外部からアクセス', async () => {
+            const response = await supertest(expressApp)
+                .post(indBaseURI)
+                .set({ session: encodeURIComponent(Session.PXR_ROOT) })
+                .set({ host: 'root.pxrstd.pxrsrc.me.uk' })
+                .set({ 'x-amzn-trace-id': 'Root=1-63ef4df1-0522cd53689dcada211daf8b' })
+                .query({
+                    block: 5555555,
+                    path: encodeURIComponent('/service-A')
+                })
+                .set({
+                    'Content-Type': 'application/json',
+                    accept: 'application/json'
+                });
+
+            // Expect status Internal error code.
+            expect(JSON.stringify(response.body))
+                .toBe(JSON.stringify({
+                    status: 401, message: '未ログイン状態でのリクエストはエラーです'
                 }));
             expect(response.status).toBe(401);
         });
