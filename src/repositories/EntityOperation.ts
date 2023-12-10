@@ -21,7 +21,7 @@ export default class EntityOperation {
             const repository = connection.getRepository(ProxyLog);
             const result = await repository.save(entity);
             return result;
-        } finally {
+        } finally { // eslint-disable-line array-callback-return
         }
     }
 }

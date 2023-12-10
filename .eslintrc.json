@@ -45,6 +45,7 @@
         "no-unreachable": "error",
         "dot-notation": 0,
         "no-useless-constructor": "off",
-        "no-unused-vars": "off"
+        "no-unused-vars": "off",
+        "object-shorthand": "off"
     }
 }

@@ -29,20 +29,20 @@ export class StubService {
     }
 }
 export class BinaryResponseService {
-  app: express.Express;
-  server: Server;
+    app: express.Express;
+    server: Server;
 
-  constructor (port: number, path: string) {
-      this.app = express();
-      const handler = (req: express.Request, res: express.Response) => {
-          res.status(200).send(fs.readFileSync('./src/tests/binary/res1.png'));
-      };
-      this.app.get(path, handler);
-      this.app.post(path, handler);
-      this.app.put(path, handler);
-      this.app.delete(path, handler);
-      this.server = this.app.listen(port);
-  }
+    constructor (port: number, path: string) {
+        this.app = express();
+        const handler = (req: express.Request, res: express.Response) => {
+            res.status(200).send(fs.readFileSync('./src/tests/binary/res1.png'));
+        };
+        this.app.get(path, handler);
+        this.app.post(path, handler);
+        this.app.put(path, handler);
+        this.app.delete(path, handler);
+        this.server = this.app.listen(port);
+    }
 }
 
 /** テスト用異常サーバー（宛先サービス） */
@@ -825,9 +825,12 @@ export class StubReverseProxyAPI {
                 }
                 const port =
                     path === '/service-D'
-                        ? 6666 : path === '/service-C'
-                            ? 5555 : path === '/service-B'
-                                ? 4444 : 3333;
+                        ? 6666
+                        : path === '/service-C'
+                            ? 5555
+                            : path === '/service-B'
+                                ? 4444
+                                : 3333;
                 const options: request.CoreOptions = {
                     host: 'localhost',
                     port: port

@@ -26,26 +26,26 @@ export default class ProxyReqDto {
     @IsString()
     @IsDefined()
     @Expose({ name: 'path' })
-    toPath: string;
+        toPath: string;
 
     /** 宛先API PATH */
     @Transform(transformToNumberOnlyToBlock)
     @IsNumber()
     @IsOptional()
     @Expose({ name: 'block' })
-    toBlock: number;
+        toBlock: number;
 
     /** 呼出元API PATH */
     @Transform(transformToStringFromURIEncodedStr)
     @IsString()
     @IsOptional()
     @Expose({ name: 'from_path' })
-    fromPath: string;
+        fromPath: string;
 
     /** 呼出元ブロック */
     @Transform(transformToNumber)
     @IsNumber()
     @IsOptional()
     @Expose({ name: 'from_block' })
-    fromBlock: number;
+        fromBlock: number;
 }

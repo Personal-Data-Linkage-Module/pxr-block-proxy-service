@@ -44,7 +44,8 @@ export default class GlobalErrorHandler implements ExpressErrorMiddlewareInterfa
                         const res = {
                             property: e.property,
                             value: e.value && e.value !== 0 && e.value !== ''
-                                ? e.value : null,
+                                ? e.value
+                                : null,
                             message: Message.validation[num]
                         };
                         reason.push(res);
