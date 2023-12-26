@@ -36,7 +36,7 @@
         "isNumber": "数値ではありません",
         "isNumberString": "数値への変換に失敗しました",
         "isNotEmpty": "この値は空を期待しません",
-        "isUUID": "UUIDではありません",
+        "isUuid": "UUIDではありません",
         "isString": "文字列ではありません",
         "isObject": "JSONではありません",
         "isJson": "JSONではありません",

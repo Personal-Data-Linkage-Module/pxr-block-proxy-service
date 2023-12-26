@@ -22,30 +22,30 @@ import {
  */
 export default class ProxyReqDto {
     /** 宛先ブロック */
-    @Transform(transformToStringFromURIEncodedStr)
+    @Transform(({ value }) => { return transformToStringFromURIEncodedStr(value); })
     @IsString()
     @IsDefined()
     @Expose({ name: 'path' })
-    toPath: string;
+        toPath: string;
 
     /** 宛先API PATH */
-    @Transform(transformToNumberOnlyToBlock)
+    @Transform(({ value }) => { return transformToNumberOnlyToBlock(value); })
     @IsNumber()
     @IsOptional()
     @Expose({ name: 'block' })
-    toBlock: number;
+        toBlock: number;
 
     /** 呼出元API PATH */
-    @Transform(transformToStringFromURIEncodedStr)
+    @Transform(({ value }) => { return transformToStringFromURIEncodedStr(value); })
     @IsString()
     @IsOptional()
     @Expose({ name: 'from_path' })
-    fromPath: string;
+        fromPath: string;
 
     /** 呼出元ブロック */
-    @Transform(transformToNumber)
+    @Transform(({ value }) => { return transformToNumber(value); })
     @IsNumber()
     @IsOptional()
     @Expose({ name: 'from_block' })
-    fromBlock: number;
+        fromBlock: number;
 }
