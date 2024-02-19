@@ -24,5 +24,5 @@ CREATE TABLE IF NOT EXISTS pxr_block_proxy.log_called_api
 );
 
 -- ユーザーにテーブル・シーケンスの操作権限を付与
-
-
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA pxr_block_proxy TO pxr_block_proxy_user;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA pxr_block_proxy TO pxr_block_proxy_user;
