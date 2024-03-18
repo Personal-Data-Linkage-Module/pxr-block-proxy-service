@@ -1,0 +1,50 @@
+name: UT
+run-name: UT triggered by ${{ github.actor }}
+on: [push]
+jobs:
+  ut-job:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: setup-node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: postgres version
+        run: PGPASSWORD="postgres" psql -U postgres -h localhost -p 5432 -c "SELECT version();"
+      - name: install
+        run: npm install
+      - name: build
+        run: npm run build
+      - name: DB作成、ユーザ/スキーマ作成、テーブル作成
+        run: |
+          PGPASSWORD="postgres" psql -U postgres -h localhost -p 5432 -c "CREATE DATABASE pxr_pod WITH OWNER=postgres ENCODING='UTF8' LC_COLLATE='C' LC_CTYPE='C' TABLESPACE=pg_default CONNECTION LIMIT=-1 TEMPLATE=template0";
+          PGPASSWORD="postgres" psql -U postgres -h localhost -p 5432 -d pxr_pod -f ./ddl/createDB.sql;
+          PGPASSWORD="postgres" psql -U postgres -h localhost -p 5432 -d pxr_pod -f ./ddl/createTable.sql;
+      # - name: テスト結果クリア
+      #   run: npm run jest-clear
+      - name: テスト実行
+        run: npm run test:unit
+      - name: access.log
+        if: always()
+        run: cat ./logs/access.log
+      - name: application.log
+        if: always()
+        run: cat ./logs/application.log
+      - name: http.log
+        if: always()
+        run: cat ./logs/http.log
+      - name: system.log
+        if: always()
+        run: cat ./logs/system.log
