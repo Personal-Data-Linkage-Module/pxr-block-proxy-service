@@ -71,6 +71,9 @@ export default class AccessControlService {
             if (statusCode === 500 || statusCode === 503) {
                 throw new AppError(Message.FAILED_ACCESS_CONTROL_SERVICE, 500);
             }
+            if (statusCode === 401) {
+                throw new AppError(result.body.message, 401);
+            }
             if (statusCode !== 200) {
                 throw new AppError(Message.NOT_PERMISSION_THIS_REQUEST, 401);
             }
@@ -121,6 +124,7 @@ export default class AccessControlService {
                 // エラーオブジェクトを生成し、スローする
                 throw new AppError(Message.FAILED_TO_COLLATE_TOKEN, 400);
             }
+            return result.body;
         } catch (err) {
             if (err.name === AppError.NAME) {
                 throw err;
