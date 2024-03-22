@@ -124,4 +124,76 @@ export default class ReverseProxyService {
         entity.updatedBy = operator.loginId;
         await EntityOperation.saveEntity(entity);
     }
+
+    /**
+     * 共有のレスポンスのフィルタ処理を行う
+     * @param responseBody
+     * @param parameter
+     */
+    static filterShareResponse (responseBody: any, parameter: string) {
+        const body = responseBody;
+        if (parameter) {
+            let filterInfo = null;
+            try {
+                filterInfo = JSON.parse(parameter);
+            } catch (err) {
+                // 無効なパラメータの場合はフィルタ処理を行わない
+                return body;
+            }
+
+            if (body.document && body.document.length > 0) {
+                if (filterInfo && filterInfo.document && filterInfo.document.length > 0) {
+                    const filteredDocument = [];
+                    for (const doc of body.document) {
+                        if (filterInfo.document.some((elem: { _value: number; _ver: number; }) => elem._value === Number(doc.code.value._value) && elem._ver === Number(doc.code.value._ver))) {
+                            filteredDocument.push(doc);
+                        }
+                    }
+                    body.document = filteredDocument;
+                } else {
+                    body.document = [];
+                }
+            }
+
+            if (body.event && body.event.length > 0) {
+                if (filterInfo && filterInfo.event && filterInfo.event.length > 0) {
+                    const filteredEvent = [];
+                    for (const eve of body.event) {
+                        if (filterInfo.event.some((elem: { _value: number; _ver: number; }) => elem._value === Number(eve.code.value._value) && elem._ver === Number(eve.code.value._ver))) {
+                            if (eve.thing && eve.thing.length > 0) {
+                                const filteredEveThing = [];
+                                if (filterInfo && filterInfo.thing && filterInfo.thing.length > 0) {
+                                    for (const thi of eve.thing) {
+                                        if (filterInfo.thing.some((elem: { _value: number; _ver: number; }) => elem._value === Number(thi.code.value._value) && elem._ver === Number(thi.code.value._ver))) {
+                                            filteredEveThing.push(thi);
+                                        }
+                                    }
+                                }
+                                eve.thing = filteredEveThing.length > 0 ? filteredEveThing : null;
+                            }
+                            filteredEvent.push(eve);
+                        }
+                    }
+                    body.event = filteredEvent;
+                } else {
+                    body.event = [];
+                }
+            }
+
+            if (body.thing && body.thing.length > 0) {
+                if (filterInfo && filterInfo.thing && filterInfo.thing.length > 0) {
+                    const filteredThing = [];
+                    for (const thi of body.thing) {
+                        if (filterInfo.thing.some((elem: { _value: number; _ver: number; }) => elem._value === Number(thi.code.value._value) && elem._ver === Number(thi.code.value._ver))) {
+                            filteredThing.push(thi);
+                        }
+                    }
+                    body.thing = filteredThing;
+                } else {
+                    body.thing = [];
+                }
+            }
+        }
+        return body;
+    }
 }
