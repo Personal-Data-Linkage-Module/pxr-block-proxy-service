@@ -7,6 +7,7 @@ import fs = require('fs');
 import express = require('express');
 import request = require('request');
 import { Server } from 'net';
+import bodyParser = require('body-parser');
 /* eslint-enable */
 
 /** テスト用サーバー（宛先サービス） */
@@ -45,6 +46,423 @@ export class BinaryResponseService {
     }
 }
 
+export class BookOperateResponseService {
+    app: express.Express;
+    server: Server;
+
+    constructor (port: number, type: number) {
+        this.app = express();
+        const shareHandler = (req: express.Request, res: express.Response) => {
+            if (type === 0) {
+                res.status(200).json({
+                    document: [
+                        {
+                            id: {
+                                index: '2_1_1',
+                                value: 'doc01-89bb-f8f2-74a0-dc517da60653'
+                            },
+                            code: {
+                                index: '2_1_2',
+                                value: {
+                                    _value: 1001010,
+                                    _ver: 1
+                                }
+                            },
+                            createdAt: {
+                                index: '2_2_1',
+                                value: '2020-02-20 00:00:00'
+                            },
+                            sourceId: '20200221-1',
+                            wf: null,
+                            app: {
+                                code: {
+                                    index: '2_3_1',
+                                    value: {
+                                        _value: 1000438,
+                                        _ver: 1
+                                    }
+                                },
+                                app: {
+                                    index: '2_3_5',
+                                    value: {
+                                        _value: 1000481,
+                                        _ver: 1
+                                    }
+                                },
+                                staffId: {
+                                    index: '2_3_4',
+                                    value: 'staffId'
+                                }
+                            },
+                            chapter: [
+                                {
+                                    title: 'タイトル１',
+                                    event: [
+                                        'doc01-eve01-8eb5-9b57-ac1980208f21',
+                                        'doc01-eve02-e230-930c-c43d5050b9d3'
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    event: [
+                        {
+                            id: {
+                                index: '3_1_1',
+                                value: 'doc01-eve01-8eb5-9b57-ac1980208f21'
+                            },
+                            code: {
+                                index: '3_1_2',
+                                value: {
+                                    _value: 1000811,
+                                    _ver: 1
+                                }
+                            },
+                            start: {
+                                index: '3_2_1',
+                                value: '2020-02-20 00:00:00'
+                            },
+                            end: {
+                                index: '3_2_2',
+                                value: '2020-02-21 00:00:00'
+                            },
+                            location: {
+                                index: '3_3_1',
+                                value: 'location'
+                            },
+                            sourceId: '20200221-1',
+                            env: null,
+                            wf: null,
+                            app: {
+                                code: {
+                                    index: '3_5_1',
+                                    value: {
+                                        _value: 1000438,
+                                        _ver: 1
+                                    }
+                                },
+                                app: {
+                                    index: '3_5_5',
+                                    value: {
+                                        _value: 1000481,
+                                        _ver: 1
+                                    }
+                                }
+                            },
+                            thing: [
+                                {
+                                    acquired_time: {
+                                        index: '4_2_2_4',
+                                        value: null
+                                    },
+                                    code: {
+                                        index: '4_1_2',
+                                        value: {
+                                            _value: 1000814,
+                                            _ver: 1
+                                        }
+                                    },
+                                    env: null,
+                                    sourceId: '20200221-1',
+                                    id: {
+                                        index: '4_1_1',
+                                        value: 'doc01-eve01-thi01-c4e0-130b2788dcf4'
+                                    },
+                                    wf: null,
+                                    app: {
+                                        code: {
+                                            index: '3_5_1',
+                                            value: {
+                                                _value: 1000438,
+                                                _ver: 1
+                                            }
+                                        },
+                                        app: {
+                                            index: '3_5_5',
+                                            value: {
+                                                _value: 1000481,
+                                                _ver: 1
+                                            }
+                                        }
+                                    },
+                                    'x-axis': {
+                                        index: '4_2_2_1',
+                                        value: null
+                                    },
+                                    'y-axis': {
+                                        index: '4_2_2_2',
+                                        value: null
+                                    },
+                                    'z-axis': {
+                                        index: '4_2_2_3',
+                                        value: null
+                                    }
+                                },
+                                {
+                                    acquired_time: {
+                                        index: '4_2_2_4',
+                                        value: null
+                                    },
+                                    code: {
+                                        index: '4_1_2',
+                                        value: {
+                                            _value: 1000815,
+                                            _ver: 1
+                                        }
+                                    },
+                                    env: null,
+                                    sourceId: '20200221-1',
+                                    id: {
+                                        index: '4_1_1',
+                                        value: 'doc01-eve01-thi01-1171a3b52499'
+                                    },
+                                    wf: null,
+                                    app: {
+                                        code: {
+                                            index: '3_5_1',
+                                            value: {
+                                                _value: 1000438,
+                                                _ver: 1
+                                            }
+                                        },
+                                        app: {
+                                            index: '3_5_5',
+                                            value: {
+                                                _value: 1000481,
+                                                _ver: 1
+                                            }
+                                        }
+                                    },
+                                    'x-axis': {
+                                        index: '4_2_2_1',
+                                        value: null
+                                    },
+                                    'y-axis': {
+                                        index: '4_2_2_2',
+                                        value: null
+                                    },
+                                    'z-axis': {
+                                        index: '4_2_2_3',
+                                        value: null
+                                    }
+                                }
+                            ]
+                        }
+                    ],
+                    thing: [
+                        {
+                            acquired_time: {
+                                index: '4_2_2_4',
+                                value: null
+                            },
+                            code: {
+                                index: '4_1_2',
+                                value: {
+                                    _value: 1000818,
+                                    _ver: 1
+                                }
+                            },
+                            env: null,
+                            sourceId: '20200221-1',
+                            id: {
+                                index: '4_1_1',
+                                value: 'doc01-eve01-thi01-c4e0-130b2788dcf4'
+                            },
+                            wf: null,
+                            app: {
+                                code: {
+                                    index: '3_5_1',
+                                    value: {
+                                        _value: 1000438,
+                                        _ver: 1
+                                    }
+                                },
+                                app: {
+                                    index: '3_5_5',
+                                    value: {
+                                        _value: 1000481,
+                                        _ver: 1
+                                    }
+                                }
+                            },
+                            'x-axis': {
+                                index: '4_2_2_1',
+                                value: null
+                            },
+                            'y-axis': {
+                                index: '4_2_2_2',
+                                value: null
+                            },
+                            'z-axis': {
+                                index: '4_2_2_3',
+                                value: null
+                            }
+                        }
+                    ]
+                });
+            } else if (type === 1) {
+                res.status(200).json({
+                    document: [
+                        {
+                            id: {
+                                index: '2_1_1',
+                                value: 'doc01-89bb-f8f2-74a0-dc517da60653'
+                            },
+                            code: {
+                                index: '2_1_2',
+                                value: {
+                                    _value: 1001010,
+                                    _ver: 1
+                                }
+                            },
+                            createdAt: {
+                                index: '2_2_1',
+                                value: '2020-02-20 00:00:00'
+                            },
+                            sourceId: '20200221-1',
+                            wf: null,
+                            app: {
+                                code: {
+                                    index: '2_3_1',
+                                    value: {
+                                        _value: 1000438,
+                                        _ver: 1
+                                    }
+                                },
+                                app: {
+                                    index: '2_3_5',
+                                    value: {
+                                        _value: 1000481,
+                                        _ver: 1
+                                    }
+                                },
+                                staffId: {
+                                    index: '2_3_4',
+                                    value: 'staffId'
+                                }
+                            },
+                            chapter: [
+                                {
+                                    title: 'タイトル１',
+                                    event: [
+                                        'doc01-eve01-8eb5-9b57-ac1980208f21',
+                                        'doc01-eve02-e230-930c-c43d5050b9d3'
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    event: [
+                        {
+                            id: {
+                                index: '3_1_1',
+                                value: 'doc01-eve01-8eb5-9b57-ac1980208f21'
+                            },
+                            code: {
+                                index: '3_1_2',
+                                value: {
+                                    _value: 1000811,
+                                    _ver: 1
+                                }
+                            },
+                            start: {
+                                index: '3_2_1',
+                                value: '2020-02-20 00:00:00'
+                            },
+                            end: {
+                                index: '3_2_2',
+                                value: '2020-02-21 00:00:00'
+                            },
+                            location: {
+                                index: '3_3_1',
+                                value: 'location'
+                            },
+                            sourceId: '20200221-1',
+                            env: null,
+                            wf: null,
+                            app: {
+                                code: {
+                                    index: '3_5_1',
+                                    value: {
+                                        _value: 1000438,
+                                        _ver: 1
+                                    }
+                                },
+                                app: {
+                                    index: '3_5_5',
+                                    value: {
+                                        _value: 1000481,
+                                        _ver: 1
+                                    }
+                                }
+                            },
+                            thing: null
+                        }
+                    ],
+                    thing: [
+                        {
+                            acquired_time: {
+                                index: '4_2_2_4',
+                                value: null
+                            },
+                            code: {
+                                index: '4_1_2',
+                                value: {
+                                    _value: 1000818,
+                                    _ver: 1
+                                }
+                            },
+                            env: null,
+                            sourceId: '20200221-1',
+                            id: {
+                                index: '4_1_1',
+                                value: 'doc01-eve01-thi01-c4e0-130b2788dcf4'
+                            },
+                            wf: null,
+                            app: {
+                                code: {
+                                    index: '3_5_1',
+                                    value: {
+                                        _value: 1000438,
+                                        _ver: 1
+                                    }
+                                },
+                                app: {
+                                    index: '3_5_5',
+                                    value: {
+                                        _value: 1000481,
+                                        _ver: 1
+                                    }
+                                }
+                            },
+                            'x-axis': {
+                                index: '4_2_2_1',
+                                value: null
+                            },
+                            'y-axis': {
+                                index: '4_2_2_2',
+                                value: null
+                            },
+                            'z-axis': {
+                                index: '4_2_2_3',
+                                value: null
+                            }
+                        }
+                    ]
+                });
+            } else if (type === 2) {
+                res.status(200).json({
+                    document: [],
+                    event: [],
+                    thing: []
+                });
+            }
+        };
+        this.app.post('/book-operate/share/search', shareHandler);
+        this.server = this.app.listen(port);
+    }
+}
+
 /** テスト用異常サーバー（宛先サービス） */
 export class StubAbnormalService {
     app: express.Express;
@@ -70,6 +488,7 @@ export class StubAccessControlService {
 
     constructor () {
         this.app = express();
+        this.app.use(bodyParser.json({ limit: '50mb' }));
         this.app.post('/access-control/token', (req: express.Request, res: express.Response) => {
             res.status(200).json([{
                 apiToken: 'b4ee2feb1251b8e2998ce0c47ccf31542d4416f4967f157b3f35534a9352216c',
@@ -77,7 +496,18 @@ export class StubAccessControlService {
             }]);
         });
         this.app.post('/access-control/collate', (req: express.Request, res: express.Response) => {
-            res.status(200).json();
+            const apiUrl = req.body.caller.apiUrl;
+            if (apiUrl === '/book-operate/share_1') {
+                res.status(200).json({ userId: 'test_user_id', parameter: '{"document":[],"event":[{"_value":1000811,"_ver":1}],"thing":[{"_value":1000814,"_ver":1},{"_value":1000815,"_ver":1},{"_value":1000818,"_ver":1}]}' });
+            } else if (apiUrl === '/book-operate/share_2') {
+                res.status(200).json({ userId: 'test_user_id', parameter: '{"document":[{"_value":1001010,"_ver":1}],"event":[],"thing":[{"_value":1000814,"_ver":1},{"_value":1000815,"_ver":1},{"_value":1000818,"_ver":1}]}' });
+            } else if (apiUrl === '/book-operate/share_3') {
+                res.status(200).json({ userId: 'test_user_id', parameter: '{"document":[{"_value":1001010,"_ver":1}],"event":[{"_value":1000811,"_ver":1}],"thing":[{"_value":1000814,"_ver":1},{"_value":1000815,"_ver":1}]}' });
+            } else if (apiUrl === '/book-operate/share_4') {
+                res.status(200).json({ userId: 'test_user_id', parameter: '{"document":[{"_value":1001010,"_ver":1}],"event":[{"_value":1000811,"_ver":1}],"thing":[{"_value":1000814,"_ver":1},{"_value":1000818,"_ver":1}]}' });
+            } else {
+                res.status(200).json({ userId: 'test_user_id', parameter: null });
+            }
         });
         this.server = this.app.listen(3015);
     }

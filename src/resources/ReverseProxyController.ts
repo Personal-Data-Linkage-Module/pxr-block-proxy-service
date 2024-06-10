@@ -77,7 +77,7 @@ export default class ReverseProxyController {
         const operator = await OperatorService.authMe(req);
 
         // APIトークンを認証させる
-        await AccessControlService.certifyToken(
+        const { parameter } = await AccessControlService.certifyToken(
             req.headers.token + '',
             'POST',
             dto.toPath,
@@ -93,6 +93,11 @@ export default class ReverseProxyController {
 
         // データベースへ登録する
         await ReverseProxyService.saveLog(dto, operator, 'POST');
+
+        // toPath が /book-operate/share/search の場合はレスポンスのフィルタ処理を行う
+        if (dto.toPath === '/book-operate/share/search') {
+            result.body = ReverseProxyService.filterShareResponse(result.body, parameter);
+        }
 
         // レスポンスを生成、処理を終了する
         res

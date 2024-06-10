@@ -69,7 +69,26 @@ class _StubAccessControlNotPermit {
         this._app = express();
 
         const handler = (req: express.Request, res: express.Response) => {
-            res.status(401);
+            res.status(401).json({ message: '認可エラーメッセージ' });
+            res.end();
+        };
+        this._app.post('/access-control/token', handler);
+        this._app.post('/access-control/collate', (req: express.Request, res: express.Response) => {
+            res.status(200).json('').end();
+        });
+        this._server = this._app.listen(port);
+    }
+}
+
+class _StubAccessControlBadRequest {
+    _app: express.Express;
+    _server: Server;
+
+    constructor (port: number) {
+        this._app = express();
+
+        const handler = (req: express.Request, res: express.Response) => {
+            res.status(400).json({ message: '内部エラーメッセージ' });
             res.end();
         };
         this._app.post('/access-control/token', handler);
@@ -247,9 +266,9 @@ describe('PXR-Block-Proxy Service Abnormal API', () => {
     // Proxy APIのテスト（APIトークン取得 API側にて処理失敗）
     describe('プロキシーAPI (GET|POST|PUT|DELETE): ' + baseURI, () => {
         // テスト前後に、スタブサーバーの起動と停止処理
-        let _stubAccessControlService: _StubAccessControlNotPermit;
+        let _stubAccessControlService: _StubAccessControlBadRequest;
         beforeAll(async () => {
-            _stubAccessControlService = new _StubAccessControlNotPermit(3015);
+            _stubAccessControlService = new _StubAccessControlBadRequest(3015);
         });
         afterAll(async () => {
             _stubAccessControlService._server.close();
@@ -274,6 +293,40 @@ describe('PXR-Block-Proxy Service Abnormal API', () => {
             // Expect status Internal error code.
             expect(JSON.stringify(response.body))
                 .toBe(JSON.stringify({ status: 401, message: 'このリクエストは許可されませんでした' }));
+            expect(response.status).toBe(401);
+        });
+    });
+
+    // Proxy APIのテスト（APIトークン取得 API側にて処理失敗）
+    describe('プロキシーAPI (GET|POST|PUT|DELETE): ' + baseURI, () => {
+        // テスト前後に、スタブサーバーの起動と停止処理
+        let _stubAccessControlService: _StubAccessControlNotPermit;
+        beforeAll(async () => {
+            _stubAccessControlService = new _StubAccessControlNotPermit(3015);
+        });
+        afterAll(async () => {
+            _stubAccessControlService._server.close();
+        });
+
+        // 異常系（アクセス制御サービス 認可エラー）
+        test('異常系: GET（アクセス制御サービス 認可エラー）', async () => {
+            const response = await supertest(expressApp)
+                .get(baseURI)
+                .set('Cookie', ['operator_type0_session=a'])
+                .query({
+                    block: 5555555,
+                    from_block: 3333333,
+                    path: encodeURIComponent('/service-A'),
+                    from_path: encodeURIComponent('/service-B')
+                })
+                .set({
+                    'Content-Type': 'application/json',
+                    accept: 'application/json'
+                });
+
+            // Expect status Internal error code.
+            expect(JSON.stringify(response.body))
+                .toBe(JSON.stringify({ status: 401, message: '認可エラーメッセージ' }));
             expect(response.status).toBe(401);
         });
     });
