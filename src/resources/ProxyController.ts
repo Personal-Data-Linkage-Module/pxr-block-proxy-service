@@ -154,7 +154,7 @@ export default class ProxyController {
             res
                 .status(result.response.statusCode)
                 .header(result.response.headers)
-                .send(result.body);
+                .send(dto.toPath === '/book-operate/share/search' ? [result.body] : result.body);
         } else {
             const results: {
                 response: request.Response;
