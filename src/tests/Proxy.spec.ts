@@ -19,7 +19,8 @@ import {
     StubAccessControlService,
     StubOperatorService,
     StubCatalogService,
-    StubReverseProxyAPI
+    StubReverseProxyAPI,
+    BookOperateResponseService
 } from './StubServer';
 /* eslint-enable */
 
@@ -38,6 +39,7 @@ let _mockOperatorService: StubOperatorService;
 let _mockCatalogService: StubCatalogService;
 let _mockReverseProxyAPI: StubReverseProxyAPI;
 let _fromServerBinary: BinaryResponseService;
+let _mockBookOperateService: BookOperateResponseService;
 
 // PXR-Block-Proxy Service APIのユニットテスト
 describe('PXR-Block-Proxy Service API', () => {
@@ -55,6 +57,7 @@ describe('PXR-Block-Proxy Service API', () => {
         _mockCatalogService = new StubCatalogService();
         _mockReverseProxyAPI = new StubReverseProxyAPI();
         _fromServerBinary = new BinaryResponseService(3018, '/binary-manage/download/:id/:chunkNo');
+        _mockBookOperateService = new BookOperateResponseService(3006, 0);
     });
     // テストがすべて終了したら実行する事後処理
     afterAll(async () => {
@@ -70,6 +73,7 @@ describe('PXR-Block-Proxy Service API', () => {
         _mockCatalogService.server.close();
         _mockReverseProxyAPI.server.close();
         _fromServerBinary.server.close();
+        _mockBookOperateService.server.close();
 
         // 元のファイル状態に変更する
         fs.writeFileSync('./config/port.json', beforeFileLines);
@@ -498,6 +502,308 @@ describe('PXR-Block-Proxy Service API', () => {
 
             // Expect status Success code.
             expect(JSON.stringify(response.body)).toBe(JSON.stringify({}));
+            expect(response.status).toBe(200);
+        });
+
+        // 正常系のPOSTプロキシー(toPathが/book-operate/share/searchの場合)
+        test('正常系: POST', async () => {
+            const response = await supertest(expressApp)
+                .post(baseURI)
+                .query({
+                    block: 5555555,
+                    from_block: 3333333,
+                    path: encodeURIComponent('/book-operate/share/search'),
+                    from_path: encodeURIComponent('/book-operate/share')
+                })
+                .set({
+                    'Content-Type': 'application/json',
+                    accept: 'application/json'
+                })
+                .set('Cookie', ['operator_type3_session=8947a6a73a6c8f952fe73678d84c2684892921bbdbd3a10fe910a7a8d3bb5aa6'])
+                .send(JSON.stringify(
+                    {
+                        userId: 'test_user1',
+                        identifier: [],
+                        logIdentifier: '1',
+                        app: {
+                            _value: 1000481
+                        },
+                        wf: null,
+                        document: [
+                            {
+                                _value: 1001010,
+                                _ver: 1
+                            }
+                        ],
+                        event: [
+                            {
+                                _value: 1000811,
+                                _ver: 1
+                            }
+                        ],
+                        thing: [
+                            {
+                                _value: 1000814,
+                                _ver: 1
+                            },
+                            {
+                                _value: 1000815,
+                                _ver: 1
+                            },
+                            {
+                                _value: 1000818,
+                                _ver: 1
+                            }
+                        ]
+                    }));
+
+            // Expect status Success code.
+            expect(JSON.stringify(response.body)).toBe(JSON.stringify([{
+                document: [
+                    {
+                        id: {
+                            index: '2_1_1',
+                            value: 'doc01-89bb-f8f2-74a0-dc517da60653'
+                        },
+                        code: {
+                            index: '2_1_2',
+                            value: {
+                                _value: 1001010,
+                                _ver: 1
+                            }
+                        },
+                        createdAt: {
+                            index: '2_2_1',
+                            value: '2020-02-20 00:00:00'
+                        },
+                        sourceId: '20200221-1',
+                        wf: null,
+                        app: {
+                            code: {
+                                index: '2_3_1',
+                                value: {
+                                    _value: 1000438,
+                                    _ver: 1
+                                }
+                            },
+                            app: {
+                                index: '2_3_5',
+                                value: {
+                                    _value: 1000481,
+                                    _ver: 1
+                                }
+                            },
+                            staffId: {
+                                index: '2_3_4',
+                                value: 'staffId'
+                            }
+                        },
+                        chapter: [
+                            {
+                                title: 'タイトル１',
+                                event: [
+                                    'doc01-eve01-8eb5-9b57-ac1980208f21',
+                                    'doc01-eve02-e230-930c-c43d5050b9d3'
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                event: [
+                    {
+                        id: {
+                            index: '3_1_1',
+                            value: 'doc01-eve01-8eb5-9b57-ac1980208f21'
+                        },
+                        code: {
+                            index: '3_1_2',
+                            value: {
+                                _value: 1000811,
+                                _ver: 1
+                            }
+                        },
+                        start: {
+                            index: '3_2_1',
+                            value: '2020-02-20 00:00:00'
+                        },
+                        end: {
+                            index: '3_2_2',
+                            value: '2020-02-21 00:00:00'
+                        },
+                        location: {
+                            index: '3_3_1',
+                            value: 'location'
+                        },
+                        sourceId: '20200221-1',
+                        env: null,
+                        wf: null,
+                        app: {
+                            code: {
+                                index: '3_5_1',
+                                value: {
+                                    _value: 1000438,
+                                    _ver: 1
+                                }
+                            },
+                            app: {
+                                index: '3_5_5',
+                                value: {
+                                    _value: 1000481,
+                                    _ver: 1
+                                }
+                            }
+                        },
+                        thing: [
+                            {
+                                acquired_time: {
+                                    index: '4_2_2_4',
+                                    value: null
+                                },
+                                code: {
+                                    index: '4_1_2',
+                                    value: {
+                                        _value: 1000814,
+                                        _ver: 1
+                                    }
+                                },
+                                env: null,
+                                sourceId: '20200221-1',
+                                id: {
+                                    index: '4_1_1',
+                                    value: 'doc01-eve01-thi01-c4e0-130b2788dcf4'
+                                },
+                                wf: null,
+                                app: {
+                                    code: {
+                                        index: '3_5_1',
+                                        value: {
+                                            _value: 1000438,
+                                            _ver: 1
+                                        }
+                                    },
+                                    app: {
+                                        index: '3_5_5',
+                                        value: {
+                                            _value: 1000481,
+                                            _ver: 1
+                                        }
+                                    }
+                                },
+                                'x-axis': {
+                                    index: '4_2_2_1',
+                                    value: null
+                                },
+                                'y-axis': {
+                                    index: '4_2_2_2',
+                                    value: null
+                                },
+                                'z-axis': {
+                                    index: '4_2_2_3',
+                                    value: null
+                                }
+                            },
+                            {
+                                acquired_time: {
+                                    index: '4_2_2_4',
+                                    value: null
+                                },
+                                code: {
+                                    index: '4_1_2',
+                                    value: {
+                                        _value: 1000815,
+                                        _ver: 1
+                                    }
+                                },
+                                env: null,
+                                sourceId: '20200221-1',
+                                id: {
+                                    index: '4_1_1',
+                                    value: 'doc01-eve01-thi01-1171a3b52499'
+                                },
+                                wf: null,
+                                app: {
+                                    code: {
+                                        index: '3_5_1',
+                                        value: {
+                                            _value: 1000438,
+                                            _ver: 1
+                                        }
+                                    },
+                                    app: {
+                                        index: '3_5_5',
+                                        value: {
+                                            _value: 1000481,
+                                            _ver: 1
+                                        }
+                                    }
+                                },
+                                'x-axis': {
+                                    index: '4_2_2_1',
+                                    value: null
+                                },
+                                'y-axis': {
+                                    index: '4_2_2_2',
+                                    value: null
+                                },
+                                'z-axis': {
+                                    index: '4_2_2_3',
+                                    value: null
+                                }
+                            }
+                        ]
+                    }
+                ],
+                thing: [
+                    {
+                        acquired_time: {
+                            index: '4_2_2_4',
+                            value: null
+                        },
+                        code: {
+                            index: '4_1_2',
+                            value: {
+                                _value: 1000818,
+                                _ver: 1
+                            }
+                        },
+                        env: null,
+                        sourceId: '20200221-1',
+                        id: {
+                            index: '4_1_1',
+                            value: 'doc01-eve01-thi01-c4e0-130b2788dcf4'
+                        },
+                        wf: null,
+                        app: {
+                            code: {
+                                index: '3_5_1',
+                                value: {
+                                    _value: 1000438,
+                                    _ver: 1
+                                }
+                            },
+                            app: {
+                                index: '3_5_5',
+                                value: {
+                                    _value: 1000481,
+                                    _ver: 1
+                                }
+                            }
+                        },
+                        'x-axis': {
+                            index: '4_2_2_1',
+                            value: null
+                        },
+                        'y-axis': {
+                            index: '4_2_2_2',
+                            value: null
+                        },
+                        'z-axis': {
+                            index: '4_2_2_3',
+                            value: null
+                        }
+                    }
+                ]
+            }]));
             expect(response.status).toBe(200);
         });
 
