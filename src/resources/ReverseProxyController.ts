@@ -85,6 +85,14 @@ export default class ReverseProxyController {
             operator
         );
         applicationLogger.info('access-token:' + req.headers['access-token']);
+
+        // toPath が /book-operate/thing/bulk または /book-operate/sourceid-store の場合はリクエストのフィルタ処理を行う
+        if (dto.toPath.startsWith('/book-operate/thing/bulk')) {
+            req.body = ReverseProxyService.filterStoreRequest(req.body, parameter, ReverseProxyService.THING_BULK);
+        } else if (dto.toPath.startsWith('/book-operate/sourceid-store')) {
+            req.body = ReverseProxyService.filterStoreRequest(req.body, parameter, ReverseProxyService.SOURCEID_STORE);
+        }
+
         // リクエストされた内容を元に、呼び出しサービスへのリクエスト明細を発行する
         const detail = await ReverseProxyService.issueDetail(req, dto);
 
@@ -122,7 +130,7 @@ export default class ReverseProxyController {
         const operator = await OperatorService.authMe(req);
 
         // APIトークンを認証させる
-        await AccessControlService.certifyToken(
+        const { parameter } = await AccessControlService.certifyToken(
             req.headers.token + '',
             'PUT',
             dto.toPath,
@@ -130,6 +138,12 @@ export default class ReverseProxyController {
             operator
         );
         applicationLogger.info('access-token:' + req.headers['access-token']);
+
+        // toPath が /book-operate/sourceid-store の場合はリクエストのフィルタ処理を行う
+        if (dto.toPath.startsWith('/book-operate/sourceid-store')) {
+            req.body = ReverseProxyService.filterStoreRequest(req.body, parameter, ReverseProxyService.SOURCEID_STORE);
+        }
+
         // リクエストされた内容を元に、呼び出しサービスへのリクエスト明細を発行する
         const detail = await ReverseProxyService.issueDetail(req, dto);
 

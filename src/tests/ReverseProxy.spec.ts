@@ -793,6 +793,18 @@ describe('PXR-Block-Proxy Service API', () => {
 
         // POSTリバースプロキシー
         describe('SNS通知バグ対応追加ケース)', () => {
+            // DoRequestメソッドのmock化
+            const doRequet = require('../common/DoRequest');
+            const mockDoPostRequest = jest.spyOn(doRequet, 'doPostRequest');
+            const mockDoPutRequest = jest.spyOn(doRequet, 'doPutRequest');
+            afterAll(async () => {
+                mockDoPostRequest.mockRestore();
+                mockDoPutRequest.mockRestore();
+            });
+            beforeEach(async () => {
+                mockDoPostRequest.mockClear();
+                mockDoPutRequest.mockClear();
+            });
             test('正常系: POST 共有のレスポンスに共有が許可されていないドキュメントが含まれていた場合にフィルタされることの確認', async () => {
                 const response = await supertest(expressApp)
                     .post(baseURI)
@@ -1821,6 +1833,832 @@ describe('PXR-Block-Proxy Service API', () => {
                         }
                     ]
                 }));
+            });
+
+            test('正常系: POST モノ一括蓄積のリクエストに蓄積が許可されていないデータ種が含まれる場合、リクエストのデータ種がフィルタされることを確認', async () => {
+                const response = await supertest(expressApp)
+                    .post(baseURI)
+                    .set('Cookie', ['operator_type2_session=8947a6a73a6c8f952fe73678d84c2684892921bbdbd3a10fe910a7a8d3bb5aa5'])
+                    .query({
+                        block: 5555555,
+                        from_block: 3333333,
+                        path: encodeURIComponent('/book-operate/thing/bulk/test_user_id/event_identifier?allowPartialStore=true'),
+                        from_path: encodeURIComponent('/book-operate/thing/bulk')
+                    })
+                    .set({
+                        'Content-Type': 'application/json',
+                        accept: 'application/json'
+                    })
+                    .send(JSON.stringify([
+                        {
+                            id: {
+                                index: '3_1_1',
+                                value: null
+                            },
+                            code: {
+                                index: '3_1_2',
+                                value: {
+                                    _value: 1000008,
+                                    _ver: 1
+                                }
+                            },
+                            sourceId: '20200221-1',
+                            env: null,
+                            app: null,
+                            wf: {
+                                code: {
+                                    index: '3_5_1',
+                                    value: {
+                                        _value: 1000004,
+                                        _ver: 1
+                                    }
+                                },
+                                app: {
+                                    index: '3_5_5',
+                                    value: {
+                                        _value: 1000007,
+                                        _ver: 1
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            id: {
+                                index: '3_1_1',
+                                value: null
+                            },
+                            code: {
+                                index: '3_1_2',
+                                value: {
+                                    _value: 1000018,
+                                    _ver: 1
+                                }
+                            },
+                            sourceId: '20200221-1',
+                            env: null,
+                            app: null,
+                            wf: {
+                                code: {
+                                    index: '3_5_1',
+                                    value: {
+                                        _value: 1000004,
+                                        _ver: 1
+                                    }
+                                },
+                                app: {
+                                    index: '3_5_5',
+                                    value: {
+                                        _value: 1000007,
+                                        _ver: 1
+                                    }
+                                }
+                            }
+                        }
+                    ]));
+
+                expect(response.status).toBe(200);
+
+                // Book運用サービス.モノ一括登録API へのリクエストの確認
+                const bookOperateApiInfos = mockDoPostRequest.mock.calls.filter(elem => (elem[0] as string).startsWith('http://localhost:3006/book-operate/thing/bulk/'));
+                const bookOperateRequest = JSON.parse(bookOperateApiInfos[0][1]['body'] as string);
+                expect(bookOperateRequest).toMatchObject([
+                    {
+                        id: {
+                            index: '3_1_1',
+                            value: null
+                        },
+                        code: {
+                            index: '3_1_2',
+                            value: {
+                                _value: 1000008,
+                                _ver: 1
+                            }
+                        },
+                        sourceId: '20200221-1',
+                        env: null,
+                        app: null,
+                        wf: {
+                            code: {
+                                index: '3_5_1',
+                                value: {
+                                    _value: 1000004,
+                                    _ver: 1
+                                }
+                            },
+                            app: {
+                                index: '3_5_5',
+                                value: {
+                                    _value: 1000007,
+                                    _ver: 1
+                                }
+                            }
+                        }
+                    }
+                ]);
+            });
+
+            test('正常系: POST ソースIDによるデータ蓄積のリクエストに蓄積が許可されていないデータ種が含まれる場合、リクエストのデータ種がフィルタされることを確認', async () => {
+                const response = await supertest(expressApp)
+                    .post(baseURI)
+                    .set('Cookie', ['operator_type2_session=8947a6a73a6c8f952fe73678d84c2684892921bbdbd3a10fe910a7a8d3bb5aa5'])
+                    .query({
+                        block: 5555555,
+                        from_block: 3333333,
+                        path: encodeURIComponent('/book-operate/sourceid-store/test_user_id?allowPartialStore=true'),
+                        from_path: encodeURIComponent('/book-operate/sourceid-store')
+                    })
+                    .set({
+                        'Content-Type': 'application/json',
+                        accept: 'application/json'
+                    })
+                    .send(JSON.stringify([
+                        {
+                            sourceId: 'test-dev-0001',
+                            document: {
+                                code: {
+                                    index: '2_1_2',
+                                    value: {
+                                        _value: 1000008,
+                                        _ver: 1
+                                    }
+                                },
+                                createdAt: {
+                                    index: '2_2_1',
+                                    value: '2020-02-20T00:00:00.000+0900'
+                                },
+                                wf: {
+                                    code: {
+                                        index: '2_3_1',
+                                        value: {
+                                            _value: 1000117,
+                                            _ver: 1
+                                        }
+                                    },
+                                    wf: {
+                                        index: '2_3_2',
+                                        value: {
+                                            _value: 1000007,
+                                            _ver: 1
+                                        }
+                                    },
+                                    role: {
+                                        index: '2_3_3',
+                                        value: {
+                                            _value: 1000005,
+                                            _ver: 1
+                                        }
+                                    },
+                                    staffId: {
+                                        index: '2_3_4',
+                                        value: 'wf01'
+                                    }
+                                },
+                                userId: {
+                                    index: '2_4_1',
+                                    value: 'test_user_id1'
+                                },
+                                chapter: [
+                                    {
+                                        title: 'イベント識別子',
+                                        sourceId: [
+                                            'test-dev-0001'
+                                        ]
+                                    }
+                                ]
+                            },
+                            event: [
+                                {
+                                    code: {
+                                        index: '3_1_2',
+                                        value: {
+                                            _value: 1000009,
+                                            _ver: 1
+                                        }
+                                    },
+                                    start: {
+                                        index: '3_2_1',
+                                        value: null
+                                    },
+                                    end: {
+                                        index: '3_2_2',
+                                        value: null
+                                    },
+                                    location: {
+                                        index: '3_3_1',
+                                        value: null
+                                    },
+                                    env: null,
+                                    app: null,
+                                    wf: {
+                                        code: {
+                                            index: '3_5_1',
+                                            value: {
+                                                _value: 1000004,
+                                                _ver: 1
+                                            }
+                                        },
+                                        wf: {
+                                            index: '3_5_2',
+                                            value: {
+                                                _value: 1000007,
+                                                _ver: 1
+                                            }
+                                        },
+                                        role: {
+                                            index: '3_5_3',
+                                            value: {
+                                                _value: 1000005,
+                                                _ver: 1
+                                            }
+                                        },
+                                        staffId: {
+                                            index: '3_5_4',
+                                            value: 'staffId'
+                                        }
+                                    },
+                                    thing: [
+                                        {
+                                            _code: {
+                                                _value: 1000010,
+                                                _ver: 1
+                                            },
+                                            acquired_time: {
+                                                index: '4_2_2_4',
+                                                value: null
+                                            },
+                                            code: {
+                                                index: '4_1_2',
+                                                value: {
+                                                    _value: 1000010,
+                                                    _ver: 1
+                                                }
+                                            },
+                                            env: {
+                                                id: '',
+                                                code: {
+                                                    _value: 1000058,
+                                                    _ver: 1
+                                                }
+                                            },
+                                            'x-axis': {
+                                                index: '4_2_2_1',
+                                                value: null
+                                            },
+                                            'y-axis': {
+                                                index: '4_2_2_2',
+                                                value: null
+                                            },
+                                            'z-axis': {
+                                                index: '4_2_2_3',
+                                                value: null
+                                            }
+                                        },
+                                        {
+                                            _code: {
+                                                _value: 1000011,
+                                                _ver: 1
+                                            },
+                                            acquired_time: {
+                                                index: '4_2_2_4',
+                                                value: null
+                                            },
+                                            code: {
+                                                index: '4_1_2',
+                                                value: {
+                                                    _value: 1000011,
+                                                    _ver: 1
+                                                }
+                                            },
+                                            env: {
+                                                id: '',
+                                                code: {
+                                                    _value: 1000058,
+                                                    _ver: 1
+                                                }
+                                            },
+                                            'x-axis': {
+                                                index: '4_2_2_1',
+                                                value: null
+                                            },
+                                            'y-axis': {
+                                                index: '4_2_2_2',
+                                                value: null
+                                            },
+                                            'z-axis': {
+                                                index: '4_2_2_3',
+                                                value: null
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]));
+
+                expect(response.status).toBe(200);
+
+                // Book運用サービス.ソースIDによる蓄積API へのリクエストの確認
+                const bookOperateApiInfos = mockDoPostRequest.mock.calls.filter(elem => (elem[0] as string).startsWith('http://localhost:3006/book-operate/sourceid-store/'));
+                const bookOperateRequest = JSON.parse(bookOperateApiInfos[0][1]['body'] as string);
+                expect(bookOperateRequest).toMatchObject([
+                    {
+                        sourceId: 'test-dev-0001',
+                        document: {
+                            code: {
+                                index: '2_1_2',
+                                value: {
+                                    _value: 1000008,
+                                    _ver: 1
+                                }
+                            },
+                            createdAt: {
+                                index: '2_2_1',
+                                value: '2020-02-20T00:00:00.000+0900'
+                            },
+                            wf: {
+                                code: {
+                                    index: '2_3_1',
+                                    value: {
+                                        _value: 1000117,
+                                        _ver: 1
+                                    }
+                                },
+                                wf: {
+                                    index: '2_3_2',
+                                    value: {
+                                        _value: 1000007,
+                                        _ver: 1
+                                    }
+                                },
+                                role: {
+                                    index: '2_3_3',
+                                    value: {
+                                        _value: 1000005,
+                                        _ver: 1
+                                    }
+                                },
+                                staffId: {
+                                    index: '2_3_4',
+                                    value: 'wf01'
+                                }
+                            },
+                            userId: {
+                                index: '2_4_1',
+                                value: 'test_user_id1'
+                            },
+                            chapter: [
+                                {
+                                    title: 'イベント識別子',
+                                    sourceId: [
+                                        'test-dev-0001'
+                                    ]
+                                }
+                            ]
+                        },
+                        event: [
+                            {
+                                code: {
+                                    index: '3_1_2',
+                                    value: {
+                                        _value: 1000009,
+                                        _ver: 1
+                                    }
+                                },
+                                start: {
+                                    index: '3_2_1',
+                                    value: null
+                                },
+                                end: {
+                                    index: '3_2_2',
+                                    value: null
+                                },
+                                location: {
+                                    index: '3_3_1',
+                                    value: null
+                                },
+                                env: null,
+                                app: null,
+                                wf: {
+                                    code: {
+                                        index: '3_5_1',
+                                        value: {
+                                            _value: 1000004,
+                                            _ver: 1
+                                        }
+                                    },
+                                    wf: {
+                                        index: '3_5_2',
+                                        value: {
+                                            _value: 1000007,
+                                            _ver: 1
+                                        }
+                                    },
+                                    role: {
+                                        index: '3_5_3',
+                                        value: {
+                                            _value: 1000005,
+                                            _ver: 1
+                                        }
+                                    },
+                                    staffId: {
+                                        index: '3_5_4',
+                                        value: 'staffId'
+                                    }
+                                },
+                                thing: [
+                                    {
+                                        _code: {
+                                            _value: 1000010,
+                                            _ver: 1
+                                        },
+                                        acquired_time: {
+                                            index: '4_2_2_4',
+                                            value: null
+                                        },
+                                        code: {
+                                            index: '4_1_2',
+                                            value: {
+                                                _value: 1000010,
+                                                _ver: 1
+                                            }
+                                        },
+                                        env: {
+                                            id: '',
+                                            code: {
+                                                _value: 1000058,
+                                                _ver: 1
+                                            }
+                                        },
+                                        'x-axis': {
+                                            index: '4_2_2_1',
+                                            value: null
+                                        },
+                                        'y-axis': {
+                                            index: '4_2_2_2',
+                                            value: null
+                                        },
+                                        'z-axis': {
+                                            index: '4_2_2_3',
+                                            value: null
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]);
+            });
+
+            test('正常系: PUT ソースIDによるデータ更新のリクエストに蓄積が許可されていないデータ種が含まれる場合、リクエストのデータ種がフィルタされることを確認', async () => {
+                const response = await supertest(expressApp)
+                    .put(baseURI)
+                    .set('Cookie', ['operator_type2_session=8947a6a73a6c8f952fe73678d84c2684892921bbdbd3a10fe910a7a8d3bb5aa5'])
+                    .query({
+                        block: 5555555,
+                        from_block: 3333333,
+                        path: encodeURIComponent('/book-operate/sourceid-store/test_user_id?allowPartialStore=true'),
+                        from_path: encodeURIComponent('/book-operate/sourceid-store')
+                    })
+                    .set({
+                        'Content-Type': 'application/json',
+                        accept: 'application/json'
+                    })
+                    .send(JSON.stringify([
+                        {
+                            sourceId: 'test-dev-0001',
+                            document: {
+                                code: {
+                                    index: '2_1_2',
+                                    value: {
+                                        _value: 1000008,
+                                        _ver: 1
+                                    }
+                                },
+                                createdAt: {
+                                    index: '2_2_1',
+                                    value: '2020-02-20T00:00:00.000+0900'
+                                },
+                                wf: {
+                                    code: {
+                                        index: '2_3_1',
+                                        value: {
+                                            _value: 1000117,
+                                            _ver: 1
+                                        }
+                                    },
+                                    wf: {
+                                        index: '2_3_2',
+                                        value: {
+                                            _value: 1000007,
+                                            _ver: 1
+                                        }
+                                    },
+                                    role: {
+                                        index: '2_3_3',
+                                        value: {
+                                            _value: 1000005,
+                                            _ver: 1
+                                        }
+                                    },
+                                    staffId: {
+                                        index: '2_3_4',
+                                        value: 'wf01'
+                                    }
+                                },
+                                userId: {
+                                    index: '2_4_1',
+                                    value: 'test_user_id1'
+                                },
+                                chapter: [
+                                    {
+                                        title: 'イベント識別子',
+                                        sourceId: [
+                                            'test-dev-0001'
+                                        ]
+                                    }
+                                ]
+                            },
+                            event: [
+                                {
+                                    code: {
+                                        index: '3_1_2',
+                                        value: {
+                                            _value: 1000009,
+                                            _ver: 1
+                                        }
+                                    },
+                                    start: {
+                                        index: '3_2_1',
+                                        value: null
+                                    },
+                                    end: {
+                                        index: '3_2_2',
+                                        value: null
+                                    },
+                                    location: {
+                                        index: '3_3_1',
+                                        value: null
+                                    },
+                                    env: null,
+                                    app: null,
+                                    wf: {
+                                        code: {
+                                            index: '3_5_1',
+                                            value: {
+                                                _value: 1000004,
+                                                _ver: 1
+                                            }
+                                        },
+                                        wf: {
+                                            index: '3_5_2',
+                                            value: {
+                                                _value: 1000007,
+                                                _ver: 1
+                                            }
+                                        },
+                                        role: {
+                                            index: '3_5_3',
+                                            value: {
+                                                _value: 1000005,
+                                                _ver: 1
+                                            }
+                                        },
+                                        staffId: {
+                                            index: '3_5_4',
+                                            value: 'staffId'
+                                        }
+                                    },
+                                    thing: [
+                                        {
+                                            _code: {
+                                                _value: 1000010,
+                                                _ver: 1
+                                            },
+                                            acquired_time: {
+                                                index: '4_2_2_4',
+                                                value: null
+                                            },
+                                            code: {
+                                                index: '4_1_2',
+                                                value: {
+                                                    _value: 1000010,
+                                                    _ver: 1
+                                                }
+                                            },
+                                            env: {
+                                                id: '',
+                                                code: {
+                                                    _value: 1000058,
+                                                    _ver: 1
+                                                }
+                                            },
+                                            'x-axis': {
+                                                index: '4_2_2_1',
+                                                value: null
+                                            },
+                                            'y-axis': {
+                                                index: '4_2_2_2',
+                                                value: null
+                                            },
+                                            'z-axis': {
+                                                index: '4_2_2_3',
+                                                value: null
+                                            }
+                                        },
+                                        {
+                                            _code: {
+                                                _value: 1000011,
+                                                _ver: 1
+                                            },
+                                            acquired_time: {
+                                                index: '4_2_2_4',
+                                                value: null
+                                            },
+                                            code: {
+                                                index: '4_1_2',
+                                                value: {
+                                                    _value: 1000011,
+                                                    _ver: 1
+                                                }
+                                            },
+                                            env: {
+                                                id: '',
+                                                code: {
+                                                    _value: 1000058,
+                                                    _ver: 1
+                                                }
+                                            },
+                                            'x-axis': {
+                                                index: '4_2_2_1',
+                                                value: null
+                                            },
+                                            'y-axis': {
+                                                index: '4_2_2_2',
+                                                value: null
+                                            },
+                                            'z-axis': {
+                                                index: '4_2_2_3',
+                                                value: null
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]));
+
+                expect(response.status).toBe(200);
+
+                // Book運用サービス.ソースIDによる蓄積API へのリクエストの確認
+                const bookOperateApiInfos = mockDoPutRequest.mock.calls.filter(elem => (elem[0] as string).startsWith('http://localhost:3006/book-operate/sourceid-store/'));
+                const bookOperateRequest = JSON.parse(bookOperateApiInfos[0][1]['body'] as string);
+                expect(bookOperateRequest).toMatchObject([
+                    {
+                        sourceId: 'test-dev-0001',
+                        document: {
+                            code: {
+                                index: '2_1_2',
+                                value: {
+                                    _value: 1000008,
+                                    _ver: 1
+                                }
+                            },
+                            createdAt: {
+                                index: '2_2_1',
+                                value: '2020-02-20T00:00:00.000+0900'
+                            },
+                            wf: {
+                                code: {
+                                    index: '2_3_1',
+                                    value: {
+                                        _value: 1000117,
+                                        _ver: 1
+                                    }
+                                },
+                                wf: {
+                                    index: '2_3_2',
+                                    value: {
+                                        _value: 1000007,
+                                        _ver: 1
+                                    }
+                                },
+                                role: {
+                                    index: '2_3_3',
+                                    value: {
+                                        _value: 1000005,
+                                        _ver: 1
+                                    }
+                                },
+                                staffId: {
+                                    index: '2_3_4',
+                                    value: 'wf01'
+                                }
+                            },
+                            userId: {
+                                index: '2_4_1',
+                                value: 'test_user_id1'
+                            },
+                            chapter: [
+                                {
+                                    title: 'イベント識別子',
+                                    sourceId: [
+                                        'test-dev-0001'
+                                    ]
+                                }
+                            ]
+                        },
+                        event: [
+                            {
+                                code: {
+                                    index: '3_1_2',
+                                    value: {
+                                        _value: 1000009,
+                                        _ver: 1
+                                    }
+                                },
+                                start: {
+                                    index: '3_2_1',
+                                    value: null
+                                },
+                                end: {
+                                    index: '3_2_2',
+                                    value: null
+                                },
+                                location: {
+                                    index: '3_3_1',
+                                    value: null
+                                },
+                                env: null,
+                                app: null,
+                                wf: {
+                                    code: {
+                                        index: '3_5_1',
+                                        value: {
+                                            _value: 1000004,
+                                            _ver: 1
+                                        }
+                                    },
+                                    wf: {
+                                        index: '3_5_2',
+                                        value: {
+                                            _value: 1000007,
+                                            _ver: 1
+                                        }
+                                    },
+                                    role: {
+                                        index: '3_5_3',
+                                        value: {
+                                            _value: 1000005,
+                                            _ver: 1
+                                        }
+                                    },
+                                    staffId: {
+                                        index: '3_5_4',
+                                        value: 'staffId'
+                                    }
+                                },
+                                thing: [
+                                    {
+                                        _code: {
+                                            _value: 1000010,
+                                            _ver: 1
+                                        },
+                                        acquired_time: {
+                                            index: '4_2_2_4',
+                                            value: null
+                                        },
+                                        code: {
+                                            index: '4_1_2',
+                                            value: {
+                                                _value: 1000010,
+                                                _ver: 1
+                                            }
+                                        },
+                                        env: {
+                                            id: '',
+                                            code: {
+                                                _value: 1000058,
+                                                _ver: 1
+                                            }
+                                        },
+                                        'x-axis': {
+                                            index: '4_2_2_1',
+                                            value: null
+                                        },
+                                        'y-axis': {
+                                            index: '4_2_2_2',
+                                            value: null
+                                        },
+                                        'z-axis': {
+                                            index: '4_2_2_3',
+                                            value: null
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]);
             });
         });
     });
