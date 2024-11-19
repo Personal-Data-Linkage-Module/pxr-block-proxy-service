@@ -44,6 +44,13 @@ export class Application {
             this.server.keepAliveTimeout = 0;
             this.server.headersTimeout = 0;
         }
+
+        process.on('SIGTERM', () => {
+            // サーバをシャットダウンする
+            this.server.close(() => {
+                systemLogger.info('SIGTERM signal received.');
+            });
+        });
     }
 
     async start () {
