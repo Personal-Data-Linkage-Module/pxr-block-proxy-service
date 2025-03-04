@@ -458,7 +458,13 @@ export class BookOperateResponseService {
                 });
             }
         };
+        const storeHandler = (req: express.Request, res: express.Response) => {
+            res.status(200).json([]);
+        };
         this.app.post('/book-operate/share/search', shareHandler);
+        this.app.post('/book-operate/thing/bulk/:userId/:eventId', storeHandler);
+        this.app.post('/book-operate/sourceid-store/:userId', storeHandler);
+        this.app.put('/book-operate/sourceid-store/:userId', storeHandler);
         this.server = this.app.listen(port);
     }
 }
@@ -505,6 +511,10 @@ export class StubAccessControlService {
                 res.status(200).json({ userId: 'test_user_id', parameter: '{"document":[{"_value":1001010,"_ver":1}],"event":[{"_value":1000811,"_ver":1}],"thing":[{"_value":1000814,"_ver":1},{"_value":1000815,"_ver":1}]}' });
             } else if (apiUrl === '/book-operate/share_4') {
                 res.status(200).json({ userId: 'test_user_id', parameter: '{"document":[{"_value":1001010,"_ver":1}],"event":[{"_value":1000811,"_ver":1}],"thing":[{"_value":1000814,"_ver":1},{"_value":1000818,"_ver":1}]}' });
+            } else if (apiUrl === '/book-operate/thing/bulk') {
+                res.status(200).json({ userId: 'test_user_id', parameter: '[{"_value":1000008,"_ver":1}]' });
+            } else if (apiUrl === '/book-operate/sourceid-store') {
+                res.status(200).json({ userId: 'test_user_id', parameter: '[{"_value":1000008,"_ver":1},{"_value":1000009,"_ver":1},{"_value":1000010,"_ver":1}]' });
             } else {
                 res.status(200).json({ userId: 'test_user_id', parameter: null });
             }
