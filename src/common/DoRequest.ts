@@ -8,6 +8,8 @@ import { systemLogger } from './logging';
 import AppError from './AppError';
 import Config from './Config';
 const Message = Config.ReadConfig('./config/message.json');
+const dns = require('dns');
+dns.setDefaultResultOrder('ipv4first');
 /* eslint-enable */
 
 /**

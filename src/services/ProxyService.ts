@@ -70,8 +70,10 @@ export default class ProxyService {
         serviceDto.fromCatalog = await CatalogService.get(dto.fromBlock || operator.blockCode, operator);
         applicationLogger.info('ProxyService.acquireVariousInformation serviceDto.fromCatalog: ' + JSON.stringify(serviceDto.fromCatalog));
         serviceDto.fromPath = !dto.fromPath
-            ? '/pxr-block-proxy' : /^\/.*/.test(dto.fromPath)
-                ? dto.fromPath : `/${dto.fromPath}`;
+            ? '/pxr-block-proxy'
+            : /^\/.*/.test(dto.fromPath)
+                ? dto.fromPath
+                : `/${dto.fromPath}`;
         serviceDto.toCatalog = await CatalogService.get(dto.toBlock || operator.blockCode, operator);
         applicationLogger.info('ProxyService.acquireVariousInformation serviceDto.toCatalog: ' + JSON.stringify(serviceDto.toCatalog));
         serviceDto.toPath = /^\/.*/.test(dto.toPath) ? dto.toPath : `/${dto.toPath}`;
